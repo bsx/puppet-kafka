@@ -7,22 +7,20 @@
 # This private class is meant to be called from `kafka::broker`.
 # It manages the creation of topics on the kafka broker
 #
+# This resource only exists for backwards compatibility, it uses the new provider type.
 define kafka::broker::topic(
   $ensure             = '',
   $zookeeper          = '',
   $replication_factor = 1,
-  $partitions         = 1
+  $partitions         = 1,
+  $options            = {},
 ) {
 
-  $_zookeeper          = "--zookeeper ${zookeeper}"
-  $_replication_factor = "--replication-factor ${replication_factor}"
-  $_partitions         = "--partitions ${partitions}"
-
-  if $ensure == 'present' {
-    exec { "create topic ${name}":
-      path    => '/usr/bin:/usr/sbin/:/bin:/sbin:/opt/kafka/bin',
-      command => "kafka-topics.sh --create ${_zookeeper} ${_replication_factor} ${_partitions} --topic ${name}",
-      unless  => "kafka-topics.sh --list ${_zookeeper} | grep -x ${name}",
-    }
+  kafka_topic{ $name:
+    ensure             => $ensure,
+    replication_factor => $replication_factor,
+    partitions         => $partitions,
+    options            => $options,
   }
+
 }
