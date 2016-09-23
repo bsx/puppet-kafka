@@ -12,17 +12,14 @@ define kafka::topic(
   $replication_factor = 1,
   $partitions         = 1,
   $bin_dir            = '/opt/kafka/bin',
+  $options            = {},
 ) {
 
-  $_zookeeper          = "--zookeeper ${zookeeper}"
-  $_replication_factor = "--replication-factor ${replication_factor}"
-  $_partitions         = "--partitions ${partitions}"
-
-  if $ensure == 'present' {
-    exec { "create topic ${name}":
-      path    => "/usr/bin:/usr/sbin/:/bin:/sbin:${bin_dir}",
-      command => "kafka-topics.sh --create ${_zookeeper} ${_replication_factor} ${_partitions} --topic ${name}",
-      unless  => "kafka-topics.sh --list ${_zookeeper} | grep -x ${name}",
-    }
+  kafka_topic{ $name:
+    ensure             => $ensure,
+    replication_factor => $replication_factor,
+    partitions         => $partitions,
+    options            => $options,
   }
+
 }
