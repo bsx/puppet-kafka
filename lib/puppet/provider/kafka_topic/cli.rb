@@ -84,7 +84,7 @@ Puppet::Type.type(:kafka_topic).provide(:cli) do
         end
         if @added_configs.length > 0
             configs([zookeeper_opts, '--alter', '--entity-name', @resource[:name],
-                    '--entity-type', 'topics', addconfig_opts(@added_configs)].compact)
+                    '--entity-type', 'topics', '--add-config', addconfig_opts(@added_configs)].compact)
         end
         @property_hash.clear
     end
@@ -123,10 +123,9 @@ Puppet::Type.type(:kafka_topic).provide(:cli) do
     def self.addconfig_opts(configs)
         opts = []
         configs.each do |k,v|
-            opts << '--add-config'
             opts << "#{k}=#{v}"
         end
-        return opts
+        return opts.join(',')
     end
 
     def zookeeper_opts
