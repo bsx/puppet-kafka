@@ -93,7 +93,7 @@ Puppet::Type.type(:kafka_topic).provide(:cli) do
         current = @property_hash[:options]
         value.keys.each do |k|
             if current.has_key? k
-                if current[k] != value[k]
+                if current[k].to_s != value[k].to_s
                     @added_configs[k] = value[k]
                 end
             else
